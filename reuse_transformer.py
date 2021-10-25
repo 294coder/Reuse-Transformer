@@ -25,10 +25,11 @@ class ReuseAttenLayer(nn.Module):
         self.exact_layer = ExactAttentionLayer(embed_dim, num_heads, dropout, 1 - reuse_ratio)
         self.v_proj = nn.Parameter(torch.randn([embed_dim, embed_dim]))
         self.proj = nn.Linear(2 * embed_dim, embed_dim)
+        self.register_buffer('reuse_atten', None)
 
     def forward(self, q, k, v, atten_mask=None):
         outputs, reuse_attn = self.exact_layer(q, k, v, atten_mask)
-        self.register_buffer('reuse_atten', reuse_attn.detach())
+        self.reuse_atten = reuse_attn.detach()
         reuse_outputs = torch.bmm(self.reuse_atten, v)  # [bs, tgt_len, dims]
         out = torch.einsum('b l d, d d -> b l d', reuse_outputs, self.v_proj)
         out = torch.cat([outputs, out], dim=2)  # [bs, tgt_len, 2*dims]
