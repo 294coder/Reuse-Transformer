@@ -1,4 +1,4 @@
 ## Reuse-Transformer
-reuse Transformer inoffical implemention
+reuse Transformer unoffical implementation.
 
-paper link: https://arxiv.org/abs/2110.06821
+[paper link](https://arxiv.org/abs/2110.06821)
